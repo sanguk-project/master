@@ -3,200 +3,94 @@ base_model: google/gemma-7b
 library_name: peft
 ---
 
-# Model Card for Model ID
+# Gemma-7B LoRA Fine-tuned Model (Rank 16)
 
-<!-- Provide a quick summary of what the model is/does. -->
+이 모델은 Google의 Gemma-7B를 기반으로 LoRA(Low-Rank Adaptation) 기법을 사용하여 fine-tuning된 모델입니다.
 
+## 모델 세부사항
 
+### 모델 설명
 
-## Model Details
+이 모델은 Gemma-7B를 기반으로 하여 LoRA 어댑터를 사용하여 fine-tuning된 언어 모델입니다. rank=16 설정으로 높은 표현력을 제공하여 복잡한 태스크에도 효과적으로 대응할 수 있습니다.
 
-### Model Description
+- **개발자:** Master Project
+- **모델 타입:** Causal Language Model
+- **언어:** 한국어/영어
+- **라이센스:** Gemma License
+- **베이스 모델:** google/gemma-7b
 
-<!-- Provide a longer summary of what this model is. -->
+### 모델 구성
 
+- **PEFT 타입:** LoRA (Low-Rank Adaptation)
+- **LoRA Rank (r):** 16
+- **LoRA Alpha:** 16
+- **LoRA Dropout:** 0.1
+- **타겟 모듈:** v_proj, k_proj, out_proj, q_proj, fc_in, fc_out
 
+## 사용법
 
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
+### 직접 사용
 
-### Model Sources [optional]
+```python
+from peft import PeftModel
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-<!-- Provide the basic links for the model. -->
+# 베이스 모델과 토크나이저 로드
+base_model = AutoModelForCausalLM.from_pretrained("google/gemma-7b")
+tokenizer = AutoTokenizer.from_pretrained("google/gemma-7b")
 
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
+# LoRA 어댑터 로드
+model = PeftModel.from_pretrained(base_model, "./model/gemma-7b-r16-master")
 
-## Uses
+# 추론 실행
+inputs = tokenizer("안녕하세요", return_tensors="pt")
+outputs = model.generate(**inputs, max_length=100)
+result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(result)
+```
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
+## 훈련 세부사항
 
-### Direct Use
+### 훈련 설정
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+- **베이스 모델:** google/gemma-7b
+- **LoRA 설정:** 
+  - Rank: 16 (높은 표현력을 위한 고차원 어댑터)
+  - Alpha: 16
+  - Dropout: 0.1
+- **타겟 모듈:** Attention 레이어의 핵심 projection 레이어들
 
-[More Information Needed]
+### 파일 구조
 
-### Downstream Use [optional]
+- `adapter_model.safetensors`: LoRA 어댑터 가중치
+- `adapter_config.json`: LoRA 설정 파일
+- `tokenizer.json`: 토크나이저 설정
+- `trainer_state.json`: 훈련 상태 정보
+- `training_args.bin`: 훈련 파라미터
 
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
+## 성능 특징
 
-[More Information Needed]
+- **높은 표현력:** 높은 rank로 복잡한 패턴 학습 가능
+- **추론 속도:** 베이스 모델 대비 유사한 추론 속도
+- **성능-효율성 균형:** 성능과 효율성의 균형점
+- **범용성:** 다양한 태스크에 적용 가능
 
-### Out-of-Scope Use
+## 제한사항
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
+- 베이스 모델인 Gemma-7B의 제한사항을 상속
+- 높은 rank로 인해 r4, r8 대비 메모리 사용량 증가
+- 특정 도메인에 특화된 fine-tuning으로 일반적인 태스크에서는 성능 차이 가능
 
-[More Information Needed]
+## 기술 사양
 
-## Bias, Risks, and Limitations
+### 모델 아키텍처
 
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
+- **베이스:** Transformer 기반 Causal Language Model
+- **어댑터:** LoRA (Low-Rank Adaptation, Rank=16)
+- **파라미터 수:** 베이스 모델 7B + LoRA 어댑터 (고용량)
 
-[More Information Needed]
+### 프레임워크
 
-### Recommendations
-
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
-
-## How to Get Started with the Model
-
-Use the code below to get started with the model.
-
-[More Information Needed]
-
-## Training Details
-
-### Training Data
-
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-[More Information Needed]
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-[More Information Needed]
-
-
-#### Training Hyperparameters
-
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-[More Information Needed]
-
-### Results
-
-[More Information Needed]
-
-#### Summary
-
-
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-[More Information Needed]
-
-**APA:**
-
-[More Information Needed]
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
-### Framework versions
-
-- PEFT 0.13.2
+- **PEFT:** Parameter-Efficient Fine-Tuning
+- **Transformers:** Hugging Face Transformers
+- **PyTorch:** Deep Learning Framework

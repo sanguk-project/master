@@ -3,200 +3,91 @@ base_model: google/codegemma-7b-it
 library_name: peft
 ---
 
-# Model Card for Model ID
+# CodeGemma-7B-IT LoRA Fine-tuned Model (Rank 16)
 
-<!-- Provide a quick summary of what the model is/does. -->
+이 모델은 Google의 CodeGemma-7B-IT(Instruction Tuned)를 기반으로 LoRA(Low-Rank Adaptation) 기법을 사용하여 fine-tuning된 고성능 대화형 코드 생성 모델입니다.
 
+## 모델 세부사항
 
+### 모델 설명
 
-## Model Details
+이 모델은 CodeGemma-7B-IT를 기반으로 하여 LoRA 어댑터를 사용하여 fine-tuning된 코드 생성 언어 모델입니다. rank=16 설정으로 높은 표현력을 제공하여 복잡한 코딩 지시사항과 고급 프로그래밍 태스크를 효과적으로 수행할 수 있습니다.
 
-### Model Description
+- **개발자:** Master Project
+- **모델 타입:** High-Performance Instruction-Following Code Model
+- **언어:** 다양한 프로그래밍 언어 + 복잡한 자연어 지시사항
+- **라이센스:** Gemma License
+- **베이스 모델:** google/codegemma-7b-it
 
-<!-- Provide a longer summary of what this model is. -->
+### 모델 구성
 
+- **PEFT 타입:** LoRA (Low-Rank Adaptation)
+- **LoRA Rank (r):** 16
+- **LoRA Alpha:** 16
+- **LoRA Dropout:** 0.1
+- **특화 영역:** 고급 프로그래밍, 소프트웨어 아키텍처, 코드 분석
 
+## 사용법
 
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
+### 직접 사용
 
-### Model Sources [optional]
+```python
+from peft import PeftModel
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-<!-- Provide the basic links for the model. -->
+# 베이스 모델과 토크나이저 로드
+base_model = AutoModelForCausalLM.from_pretrained("google/codegemma-7b-it")
+tokenizer = AutoTokenizer.from_pretrained("google/codegemma-7b-it")
 
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
+# LoRA 어댑터 로드
+model = PeftModel.from_pretrained(base_model, "./model/codegemma-7b-r16-it-master")
 
-## Uses
+# 복잡한 지시 기반 코드 생성
+instruction = "RESTful API를 구현하는 완전한 Flask 애플리케이션을 작성해주세요. 사용자 인증, 데이터베이스 연동, 에러 핸들링을 포함해야 합니다."
+inputs = tokenizer(instruction, return_tensors="pt")
+outputs = model.generate(**inputs, max_length=400, temperature=0.7)
+result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(result)
+```
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
+## 훈련 세부사항
 
-### Direct Use
+### 훈련 설정
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+- **베이스 모델:** google/codegemma-7b-it
+- **LoRA 설정:** 
+  - Rank: 16 (높은 표현력을 위한 고차원 어댑터)
+  - Alpha: 16
+  - Dropout: 0.1
+- **특화 영역:** 복잡한 소프트웨어 개발, 시스템 설계, 고급 프로그래밍
 
-[More Information Needed]
+### 파일 구조
 
-### Downstream Use [optional]
+- `adapter_model.safetensors`: LoRA 어댑터 가중치
+- `adapter_config.json`: LoRA 설정 파일
+- `tokenizer.json`: 토크나이저 설정
+- `trainer_state.json`: 훈련 상태 정보
+- `training_args.bin`: 훈련 파라미터
 
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
+## 성능 특징
 
-[More Information Needed]
+- **고급 아키텍처:** 복잡한 소프트웨어 아키텍처 설계 및 구현
+- **시스템 설계:** 대규모 시스템의 전체적인 설계 지원
+- **코드 분석:** 깊이 있는 코드 분석 및 개선점 제시
+- **성능 최적화:** 알고리즘 및 시스템 성능 최적화
+- **보안 검토:** 코드 보안 취약점 분석 및 해결
 
-### Out-of-Scope Use
+## 기술 사양
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
+### 모델 아키텍처
 
-[More Information Needed]
+- **베이스:** Transformer 기반 Instruction-Following Code Model
+- **어댑터:** LoRA (Low-Rank Adaptation, Rank=16)
+- **파라미터 수:** 베이스 모델 7B + LoRA 어댑터 (고용량)
+- **특화 영역:** 고급 소프트웨어 아키텍처 및 시스템 설계
 
-## Bias, Risks, and Limitations
+### 프레임워크
 
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-[More Information Needed]
-
-### Recommendations
-
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
-
-## How to Get Started with the Model
-
-Use the code below to get started with the model.
-
-[More Information Needed]
-
-## Training Details
-
-### Training Data
-
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-[More Information Needed]
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-[More Information Needed]
-
-
-#### Training Hyperparameters
-
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-[More Information Needed]
-
-### Results
-
-[More Information Needed]
-
-#### Summary
-
-
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-[More Information Needed]
-
-**APA:**
-
-[More Information Needed]
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
-### Framework versions
-
-- PEFT 0.13.2
+- **PEFT:** Parameter-Efficient Fine-Tuning
+- **Transformers:** Hugging Face Transformers
+- **PyTorch:** Deep Learning Framework
