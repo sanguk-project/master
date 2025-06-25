@@ -22,7 +22,8 @@
 ├── llama_fine_tuning.ipynb         # LLaMA 모델 파인튜닝
 ├── learning_llm_test.ipynb         # LLM 학습 테스트
 ├── llm_inference.ipynb             # 모델 추론 및 평가
-└── huggigface_model.ipynb          # Hugging Face 모델 연동
+├── huggigface_model.ipynb          # Hugging Face 모델 연동
+└── README.md                       # 프로젝트 설명서
 ```
 
 ## 🚀 주요 기능
@@ -66,16 +67,6 @@ pip install flash-attn
 
 # Hugging Face 및 Kaggle
 pip install huggingface-hub kaggle
-```
-
-### 환경 설정
-```bash
-# Hugging Face 토큰 설정
-huggingface-cli login
-
-# Kaggle API 설정 (Gemma 모델 다운로드용)
-export KAGGLE_USERNAME="your_username"
-export KAGGLE_KEY="your_api_key"
 ```
 
 ## 📚 사용법

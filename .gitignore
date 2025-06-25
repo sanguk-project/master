@@ -22,4 +22,24 @@ ENV/
 
 # OS files
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Security and credentials - DO NOT COMMIT
+.env
+.env.local
+.env.production
+.env.development
+*.key
+*.pem
+credentials.json
+kaggle.json
+
+# API tokens and secrets
+*token*
+*secret*
+*key*
+config/secrets/
+
+# Dataset files (if they contain sensitive data)
+dataset/private/
+data/private/ 
